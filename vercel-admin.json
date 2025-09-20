@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "name": "guideking-admin",
+  "builds": [
+    {
+      "src": "packages/client-admin/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/packages/client-admin/dist/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/packages/client-admin/dist/index.html"
+    }
+  ],
+  "buildCommand": "cd packages/client-admin && npm run build",
+  "outputDirectory": "packages/client-admin/dist"
+}

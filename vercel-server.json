@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "name": "guideking-api",
+  "builds": [
+    {
+      "src": "packages/server/src/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "packages/server/src/server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

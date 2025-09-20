@@ -33,32 +33,66 @@ KV_REST_API_READ_ONLY_TOKEN=your-redis-readonly-token
 NODE_ENV=production
 ```
 
-## 🌐 הגדרת הפרויקט
+## 🌐 הגדרת הפרויקט ב-Vercel (Monorepo)
 
-### שלב 1: העלאה ל-Git
+הפרויקט שלך הוא monorepo עם 3 applications נפרדים. תצטרך ליצור **3 פרויקטים נפרדים** ב-Vercel:
 
-```bash
-# אתחול Git (אם עדיין לא קיים)
-git init
+### שלב 1: פריסת Backend API
 
-# הוספת קבצים
-git add .
-git commit -m "Initial commit - Interactive Guides Platform"
-
-# חיבור לrepository
-git remote add origin <your-repo-url>
-git push -u origin main
-```
-
-### שלב 2: פריסה ב-Vercel
-
-1. **היכנס ל-Vercel** והתחבר ל-Git provider
-2. **Import Project** - בחר את הrepository
-3. **הגדרות פריסה:**
+1. **היכנס ל-Vercel.com** והתחבר עם GitHub
+2. **לחץ "Add New..." → Project**
+3. **Import** את `ilaiyomsh/guideking`
+4. **הגדרות פרויקט:**
+   - **Project Name**: `guideking-api`
    - **Framework Preset**: Other
-   - **Root Directory**: `./`
+   - **Root Directory**: `packages/server`
+   - **Build Command**: `npm install`
+   - **Output Directory**: לא צריך
+   - **Install Command**: `npm install`
+
+5. **Environment Variables** (חובה!):
+   ```
+   NODE_ENV=production
+   KV_URL=your-redis-url
+   KV_REST_API_URL=your-redis-rest-url
+   KV_REST_API_TOKEN=your-redis-token
+   KV_REST_API_READ_ONLY_TOKEN=your-redis-readonly-token
+   ```
+
+### שלב 2: פריסת Admin Panel
+
+1. **לחץ "Add New..." → Project** (פרויקט חדש)
+2. **Import** את אותו repository `ilaiyomsh/guideking`
+3. **הגדרות פרויקט:**
+   - **Project Name**: `guideking-admin`
+   - **Framework Preset**: Vite
+   - **Root Directory**: `packages/client-admin`
    - **Build Command**: `npm run build`
-   - **Output Directory**: לא צריך (מוגדר ב-vercel.json)
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+
+4. **Environment Variables**:
+   ```
+   VITE_API_URL=https://guideking-api.vercel.app
+   VITE_VIEWER_URL=https://guideking-viewer.vercel.app
+   ```
+
+### שלב 3: פריסת Viewer App
+
+1. **לחץ "Add New..." → Project** (פרויקט שלישי)
+2. **Import** את אותו repository `ilaiyomsh/guideking`
+3. **הגדרות פרויקט:**
+   - **Project Name**: `guideking-viewer`
+   - **Framework Preset**: Vite
+   - **Root Directory**: `packages/client-viewer`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+
+4. **Environment Variables**:
+   ```
+   VITE_API_URL=https://guideking-api.vercel.app
+   ```
 
 ### שלב 3: הגדרת Domains
 

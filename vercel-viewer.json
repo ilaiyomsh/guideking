@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "name": "guideking-viewer",
+  "builds": [
+    {
+      "src": "packages/client-viewer/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/packages/client-viewer/dist/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/packages/client-viewer/dist/index.html"
+    }
+  ],
+  "buildCommand": "cd packages/client-viewer && npm run build",
+  "outputDirectory": "packages/client-viewer/dist"
+}
