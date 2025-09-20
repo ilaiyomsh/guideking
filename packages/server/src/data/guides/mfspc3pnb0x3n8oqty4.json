@@ -1,0 +1,31 @@
+{
+  "_id": "mfspc3pnb0x3n8oqty4",
+  "title": "מדריך להכנת חביתה",
+  "homePage": {
+    "title": "ברוכים הבאים למדריך!",
+    "content": "מדריך זה נועד ללמד אתכם כיצד להכין חביתה מ0 ל100!!"
+  },
+  "chapters": [
+    {
+      "id": "chap_mfsp81giwee3s",
+      "title": "כלים",
+      "sections": [
+        {
+          "id": "sec_mfsp88ntcjmso",
+          "title": "רשימת הכלים הנדרשים",
+          "content": "מחבת\nתרווד\nגז"
+        },
+        {
+          "id": "sec_mfsp8rkbv5ytm",
+          "title": "חשוב מאוד!",
+          "content": "יש לוודא שהמחבת עם טפלון"
+        }
+      ]
+    },
+    {
+      "id": "chap_mfsp95f5rxje8",
+      "title": "חומרים",
+      "sections": []
+    }
+  ]
+}

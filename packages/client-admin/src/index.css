@@ -1,0 +1,36 @@
+/* Toast notifications */
+.toast {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  color: white;
+  z-index: 1000;
+  max-width: 300px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.toast-success {
+  background: #10b981;
+}
+
+.toast-error {
+  background: #ef4444;
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

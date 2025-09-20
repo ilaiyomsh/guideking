@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "packages/server/src/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "packages/client-admin/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "packages/client-viewer/package.json", 
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "packages/server/src/server.js"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "packages/client-admin/dist/$1"
+    },
+    {
+      "src": "/admin",
+      "dest": "packages/client-admin/dist/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "packages/client-viewer/dist/$1"
+    },
+    {
+      "src": "/",
+      "dest": "packages/client-viewer/dist/index.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

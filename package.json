@@ -1,0 +1,31 @@
+{
+  "name": "interactive-guides-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace=packages/server",
+    "dev:admin": "npm run dev --workspace=packages/client-admin",
+    "dev:viewer": "npm run dev --workspace=packages/client-viewer",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:admin\" \"npm run dev:viewer\"",
+    "install:all": "npm install",
+    "start": "npm run dev:all",
+    "build": "npm run build --workspace=packages/client-admin && npm run build --workspace=packages/client-viewer",
+    "build:admin": "npm run build --workspace=packages/client-admin",
+    "build:viewer": "npm run build --workspace=packages/client-viewer",
+    "health": "curl -s http://localhost:3001/health | jq '.' && curl -s -I http://localhost:3000 | head -1 && curl -s -I http://localhost:3002 | head -1",
+    "test:api": "curl -s http://localhost:3001/api/guides | jq 'length' && echo 'מדריכים במערכת'"
+  },
+  "keywords": [
+    "interactive-guides",
+    "monorepo"
+  ],
+  "author": "Lead Engineer",
+  "license": "ISC",
+  "description": "Interactive Guides Platform - MVP with local storage",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
