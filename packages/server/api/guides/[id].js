@@ -34,6 +34,20 @@ export default async function handler(req, res) {
 
     const { method, query: { id } } = req;
 
+    // Ensure JSON body parsing for serverless
+    if ((method === 'POST' || method === 'PUT') && typeof req.body === 'undefined') {
+      const contentType = req.headers['content-type'] || '';
+      if (contentType.includes('application/json')) {
+        const raw = await new Promise((resolve, reject) => {
+          let data = '';
+          req.on('data', chunk => { data += chunk; });
+          req.on('end', () => resolve(data));
+          req.on('error', reject);
+        });
+        req.body = raw ? JSON.parse(raw) : {};
+      }
+    }
+
     console.log('API Request for ID:', { method, id, body: req.body });
 
     if (!id) {
