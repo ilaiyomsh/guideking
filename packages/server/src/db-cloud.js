@@ -1,6 +1,5 @@
 import { kv as vercelKv } from '@vercel/kv';
 import { createClient as createRedisClient } from 'redis';
-import { nanoid } from 'nanoid';
 
 // Decide storage driver at runtime: prefer Vercel KV REST; fallback to Redis URL
 const hasVercelKvRest = !!process.env.KV_REST_API_URL && /upstash|vercel/i.test(process.env.KV_REST_API_URL);
@@ -42,7 +41,9 @@ console.log('Cloud DB driver:', hasVercelKvRest ? 'Vercel KV REST' : hasRedisUrl
 
 // Generate unique ID for new guides
 export function generateUniqueId() {
-  return nanoid(10);
+  return (
+    Date.now().toString(36) + Math.random().toString(36).substr(2)
+  );
 }
 
 // Get all guides (only _id and title for performance)
