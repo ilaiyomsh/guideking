@@ -1,14 +1,44 @@
-import { kv } from '@vercel/kv';
+import { kv as vercelKv } from '@vercel/kv';
+import { createClient as createRedisClient } from 'redis';
 import { nanoid } from 'nanoid';
 
-// Debug: Log environment variables
-console.log('Environment check:', {
-  NODE_ENV: process.env.NODE_ENV,
-  VERCEL: process.env.VERCEL,
-  KV_URL: process.env.KV_URL ? 'SET' : 'NOT SET',
-  KV_REST_API_URL: process.env.KV_REST_API_URL ? 'SET' : 'NOT SET',
-  KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN ? 'SET' : 'NOT SET'
-});
+// Decide storage driver at runtime: prefer Vercel KV REST; fallback to Redis URL
+const hasVercelKvRest = !!process.env.KV_REST_API_URL && /upstash|vercel/i.test(process.env.KV_REST_API_URL);
+const hasRedisUrl = !!process.env.KV_URL;
+
+let redisClient = null;
+async function getRedis() {
+  if (!redisClient) {
+    if (!hasRedisUrl) throw new Error('KV_URL is not set');
+    redisClient = createRedisClient({ url: process.env.KV_URL });
+    redisClient.on('error', (err) => console.error('Redis error:', err?.message || err));
+    await redisClient.connect();
+  }
+  return redisClient;
+}
+
+// Simple key helpers abstracting KV/Redis
+async function kvGet(key) {
+  if (hasVercelKvRest) return await vercelKv.get(key);
+  const client = await getRedis();
+  const val = await client.get(key);
+  return val ? JSON.parse(val) : null;
+}
+
+async function kvSet(key, value) {
+  if (hasVercelKvRest) return await vercelKv.set(key, value);
+  const client = await getRedis();
+  return await client.set(key, JSON.stringify(value));
+}
+
+async function kvDel(key) {
+  if (hasVercelKvRest) return await vercelKv.del(key);
+  const client = await getRedis();
+  return await client.del(key);
+}
+
+// Debug: Log environment selection (no secrets)
+console.log('Cloud DB driver:', hasVercelKvRest ? 'Vercel KV REST' : hasRedisUrl ? 'Redis URL' : 'NONE');
 
 // Generate unique ID for new guides
 export function generateUniqueId() {
@@ -18,7 +48,7 @@ export function generateUniqueId() {
 // Get all guides (only _id and title for performance)
 export async function getAllGuides() {
   try {
-    const guideIndex = await kv.get('guides_index');
+    const guideIndex = await kvGet('guides_index');
     return guideIndex || [];
   } catch (error) {
     console.error('Error fetching guides index:', error);
@@ -29,7 +59,7 @@ export async function getAllGuides() {
 // Get guide by ID
 export async function getGuideById(id) {
   try {
-    const guide = await kv.get(`guide:${id}`);
+    const guide = await kvGet(`guide:${id}`);
     if (guide && !guide.homePage) {
       // Add default home page if missing
       guide.homePage = {
@@ -68,21 +98,21 @@ export async function createGuide(guide) {
     };
 
     // Check if ID already exists
-    const existingGuide = await kv.get(`guide:${newGuide._id}`);
+    const existingGuide = await kvGet(`guide:${newGuide._id}`);
     if (existingGuide) {
       throw new Error('Guide with this ID already exists');
     }
 
     // Save the guide
-    await kv.set(`guide:${newGuide._id}`, newGuide);
+    await kvSet(`guide:${newGuide._id}`, newGuide);
 
     // Update the index
-    const guideIndex = await kv.get('guides_index') || [];
+    const guideIndex = await kvGet('guides_index') || [];
     guideIndex.push({
       _id: newGuide._id,
       title: newGuide.title
     });
-    await kv.set('guides_index', guideIndex);
+    await kvSet('guides_index', guideIndex);
 
     return newGuide;
   } catch (error) {
@@ -104,7 +134,7 @@ export async function updateGuide(id, updatedGuide) {
     }
 
     // Check if guide exists
-    const existingGuide = await kv.get(`guide:${id}`);
+    const existingGuide = await kvGet(`guide:${id}`);
     if (!existingGuide) {
       return null; // Guide not found
     }
@@ -121,15 +151,15 @@ export async function updateGuide(id, updatedGuide) {
     };
 
     // Save updated guide
-    await kv.set(`guide:${id}`, guide);
+    await kvSet(`guide:${id}`, guide);
     
     // Update index if title changed
     if (existingGuide.title !== updatedGuide.title) {
-      const guideIndex = await kv.get('guides_index') || [];
+      const guideIndex = await kvGet('guides_index') || [];
       const updatedIndex = guideIndex.map(item => 
         item._id === id ? { ...item, title: updatedGuide.title } : item
       );
-      await kv.set('guides_index', updatedIndex);
+      await kvSet('guides_index', updatedIndex);
     }
     
     return guide;
@@ -143,18 +173,18 @@ export async function updateGuide(id, updatedGuide) {
 export async function deleteGuide(id) {
   try {
     // Check if guide exists
-    const existingGuide = await kv.get(`guide:${id}`);
+    const existingGuide = await kvGet(`guide:${id}`);
     if (!existingGuide) {
       return false; // Guide not found
     }
 
     // Delete the guide
-    await kv.del(`guide:${id}`);
+    await kvDel(`guide:${id}`);
     
     // Update index
-    const guideIndex = await kv.get('guides_index') || [];
+    const guideIndex = await kvGet('guides_index') || [];
     const updatedIndex = guideIndex.filter(item => item._id !== id);
-    await kv.set('guides_index', updatedIndex);
+    await kvSet('guides_index', updatedIndex);
     
     return true;
   } catch (error) {
