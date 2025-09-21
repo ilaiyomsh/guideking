@@ -11,11 +11,27 @@ if (process.env.KV_REST_API_TOKEN && !process.env.UPSTASH_REDIS_REST_TOKEN) {
 const upstash = Redis.fromEnv();
 
 async function kvGet(key) {
-  return await upstash.get(key);
+  console.log('🔴 KV GET:', key);
+  try {
+    const result = await upstash.get(key);
+    console.log('🟢 KV GET SUCCESS:', key, result ? 'HAS_DATA' : 'NULL');
+    return result;
+  } catch (error) {
+    console.error('🔴 KV GET ERROR:', key, error.message);
+    throw error;
+  }
 }
 
 async function kvSet(key, value) {
-  return await upstash.set(key, value);
+  console.log('🔴 KV SET:', key, typeof value);
+  try {
+    const result = await upstash.set(key, value);
+    console.log('🟢 KV SET SUCCESS:', key);
+    return result;
+  } catch (error) {
+    console.error('🔴 KV SET ERROR:', key, error.message);
+    throw error;
+  }
 }
 
 async function kvDel(key) {
@@ -61,6 +77,8 @@ export async function getGuideById(id) {
 // Create new guide
 export async function createGuide(guide) {
   try {
+    console.log('🔵 Creating guide with data:', JSON.stringify(guide));
+    
     // Validate required fields
     if (!guide.title || typeof guide.title !== 'string') {
       throw new Error('Guide title is required and must be a string');
@@ -81,8 +99,13 @@ export async function createGuide(guide) {
       chapters: guide.chapters || []
     };
 
+    console.log('🔵 Generated guide ID:', newGuide._id);
+    console.log('🔵 Checking if guide exists...');
+    
     // Check if ID already exists
     const existingGuide = await kvGet(`guide:${newGuide._id}`);
+    console.log('🔵 Existing guide check result:', existingGuide ? 'EXISTS' : 'NOT_EXISTS');
+    
     if (existingGuide) {
       throw new Error('Guide with this ID already exists');
     }
