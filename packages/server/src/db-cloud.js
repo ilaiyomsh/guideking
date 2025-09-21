@@ -1,12 +1,18 @@
-import { kv } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
 import { nanoid } from 'nanoid';
 
-// Debug: Log environment variables (remove in production)
+// Create KV client with Redis URL
+const kv = createClient({
+  url: process.env.KV_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
+
+// Debug: Log environment variables
 console.log('Environment check:', {
   NODE_ENV: process.env.NODE_ENV,
   VERCEL: process.env.VERCEL,
   KV_URL: process.env.KV_URL ? 'SET' : 'NOT SET',
-  KV_REST_API_URL: process.env.KV_REST_API_URL ? 'SET' : 'NOT SET'
+  KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN ? 'SET' : 'NOT SET'
 });
 
 // Generate unique ID for new guides
