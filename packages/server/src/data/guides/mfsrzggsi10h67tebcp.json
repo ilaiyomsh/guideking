@@ -1,0 +1,26 @@
+{
+  "_id": "mfsrzggsi10h67tebcp",
+  "title": "מדריך לבניית שולחנות",
+  "homePage": {
+    "title": "שולחן חייך!",
+    "content": "כאן תלמד כיצד לבנות את ה-שולחן !!"
+  },
+  "chapters": [
+    {
+      "id": "chap_mfss1ooxbq77c",
+      "title": "כלים וחומרים",
+      "sections": [
+        {
+          "id": "sec_mfss1t4qndepc",
+          "title": "New Section",
+          "content": "כלל הכלים הנדרשים:\nמסור\nפטיש\nכיסא"
+        },
+        {
+          "id": "sec_mfss28flbb1zo",
+          "title": "חומרים",
+          "content": "עצים\nברגים"
+        }
+      ]
+    }
+  ]
+}

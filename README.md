@@ -4,7 +4,7 @@
 
 ![Platform Architecture](https://img.shields.io/badge/Architecture-3%20Tier-blue)
 ![Tech Stack](https://img.shields.io/badge/Tech-React%2BNode.js-green)
-![Storage](https://img.shields.io/badge/Storage-Local%20JSON-orange)
+![Storage](https://img.shields.io/badge/Storage-Redis%20Cloud-orange)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 
 ---
@@ -22,8 +22,16 @@
 - 🔗 **העתקת קישורים** לשיתוף מהיר
 - 🌐 **תמיכה בעברית** עם RTL מלא
 - 📱 **עיצוב רספונסיבי** לכל המכשירים
-- 💾 **אחסון מקומי** ללא תלות בענן
+- ☁️ **אחסון בענן** עם Redis ו-Vercel
 - 🎨 **עיצוב Monday.com** מקצועי ומודרני
+
+## 🌐 גישה לפלטפורמה
+
+הפלטפורמה זמינה בפרודקשן בכתובות הבאות:
+
+- **📝 Admin Panel**: [https://guideking-client-admin.vercel.app](https://guideking-client-admin.vercel.app)
+- **👁️ Viewer App**: [https://guideking-client-viewer.vercel.app](https://guideking-client-viewer.vercel.app)
+- **🖥️ Server API**: [https://guideking-server.vercel.app](https://guideking-server.vercel.app)
 
 ---
 

@@ -73,8 +73,8 @@ NODE_ENV=production
 
 4. **Environment Variables**:
    ```
-   VITE_API_URL=https://guideking-api.vercel.app
-   VITE_VIEWER_URL=https://guideking-viewer.vercel.app
+   VITE_API_URL=https://guideking-server.vercel.app
+   VITE_VIEWER_URL=https://guideking-client-viewer.vercel.app
    ```
 
 ### שלב 3: פריסת Viewer App
@@ -91,7 +91,7 @@ NODE_ENV=production
 
 4. **Environment Variables**:
    ```
-   VITE_API_URL=https://guideking-api.vercel.app
+   VITE_API_URL=https://guideking-server.vercel.app
    ```
 
 ### שלב 3: הגדרת Domains
@@ -144,6 +144,22 @@ VITE_API_URL=https://your-project.vercel.app
 ## 🔄 עדכונים עתידיים
 
 כל push ל-main branch יפעיל פריסה אוטומטית ב-Vercel.
+
+---
+
+## 🌐 כתובות הפרודקשן הסופיות
+
+לאחר הפריסה המוצלחת, הפלטפורמה שלך זמינה בכתובות הבאות:
+
+- **🖥️ Server API**: [https://guideking-server.vercel.app](https://guideking-server.vercel.app)
+  - Health Check: [https://guideking-server.vercel.app/health](https://guideking-server.vercel.app/health)
+  - API Guides: [https://guideking-server.vercel.app/api/guides](https://guideking-server.vercel.app/api/guides)
+
+- **📝 Admin Panel**: [https://guideking-client-admin.vercel.app](https://guideking-client-admin.vercel.app)
+  - יצירה ועריכה של מדריכים אינטראקטיביים
+
+- **👁️ Viewer App**: [https://guideking-client-viewer.vercel.app](https://guideking-client-viewer.vercel.app)
+  - צפייה במדריכים לקהל הרחב
 
 ---
 
