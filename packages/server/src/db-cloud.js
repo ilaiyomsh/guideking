@@ -1,6 +1,14 @@
 import { kv } from '@vercel/kv';
 import { nanoid } from 'nanoid';
 
+// Debug: Log environment variables (remove in production)
+console.log('Environment check:', {
+  NODE_ENV: process.env.NODE_ENV,
+  VERCEL: process.env.VERCEL,
+  KV_URL: process.env.KV_URL ? 'SET' : 'NOT SET',
+  KV_REST_API_URL: process.env.KV_REST_API_URL ? 'SET' : 'NOT SET'
+});
+
 // Generate unique ID for new guides
 export function generateUniqueId() {
   return nanoid(10);
