@@ -1,7 +1,7 @@
-const API_BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api`;
+const API_BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}`;
 
 export const fetchGuide = async (guideId) => {
-  const response = await fetch(`${API_BASE_URL}/guides/${guideId}`);
+  const response = await fetch(`${API_BASE_URL}/api/guides/${guideId}`);
   
   if (!response.ok) {
     if (response.status === 404) {
