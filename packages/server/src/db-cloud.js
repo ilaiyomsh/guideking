@@ -1,43 +1,26 @@
-import { kv as vercelKv } from '@vercel/kv';
-import { createClient as createRedisClient } from 'redis';
+import { Redis } from '@upstash/redis';
 
-// Decide storage driver at runtime: prefer Vercel KV REST; fallback to Redis URL
-const hasVercelKvRest = !!process.env.KV_REST_API_URL && /upstash|vercel/i.test(process.env.KV_REST_API_URL);
-const hasRedisUrl = !!process.env.KV_URL;
-
-let redisClient = null;
-async function getRedis() {
-  if (!redisClient) {
-    if (!hasRedisUrl) throw new Error('KV_URL is not set');
-    redisClient = createRedisClient({ url: process.env.KV_URL });
-    redisClient.on('error', (err) => console.error('Redis error:', err?.message || err));
-    await redisClient.connect();
-  }
-  return redisClient;
+// Normalize env for Upstash SDK using Vercel KV vars
+if (process.env.KV_REST_API_URL && !process.env.UPSTASH_REDIS_REST_URL) {
+  process.env.UPSTASH_REDIS_REST_URL = process.env.KV_REST_API_URL;
+}
+if (process.env.KV_REST_API_TOKEN && !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  process.env.UPSTASH_REDIS_REST_TOKEN = process.env.KV_REST_API_TOKEN;
 }
 
-// Simple key helpers abstracting KV/Redis
+const upstash = Redis.fromEnv();
+
 async function kvGet(key) {
-  if (hasVercelKvRest) return await vercelKv.get(key);
-  const client = await getRedis();
-  const val = await client.get(key);
-  return val ? JSON.parse(val) : null;
+  return await upstash.get(key);
 }
 
 async function kvSet(key, value) {
-  if (hasVercelKvRest) return await vercelKv.set(key, value);
-  const client = await getRedis();
-  return await client.set(key, JSON.stringify(value));
+  return await upstash.set(key, value);
 }
 
 async function kvDel(key) {
-  if (hasVercelKvRest) return await vercelKv.del(key);
-  const client = await getRedis();
-  return await client.del(key);
+  return await upstash.del(key);
 }
-
-// Debug: Log environment selection (no secrets)
-console.log('Cloud DB driver:', hasVercelKvRest ? 'Vercel KV REST' : hasRedisUrl ? 'Redis URL' : 'NONE');
 
 // Generate unique ID for new guides
 export function generateUniqueId() {
