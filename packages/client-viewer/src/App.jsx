@@ -1,22 +1,52 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import GuideViewPage from './pages/GuideViewPage'
+import React, { useState, useEffect } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { GuideProvider } from './contexts/GuideContext';
+import Sidebar from './components/Sidebar';
+import GuideEditor from './components/GuideEditor';
+import HomePageEditor from './components/HomePageEditor';
+import './index.css';
 
 function App() {
+  // State to manage sidebar visibility
+  const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth > 768);
+
+  // Function to toggle sidebar
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
+  // Effect to handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsSidebarVisible(true);
+      } else {
+        setIsSidebarVisible(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/guides/:guideId" element={<GuideViewPage />} />
-        <Route path="/" element={
-          <div style={{ padding: '2rem', textAlign: 'center' }}>
-            <h1>Interactive Guides - Viewer</h1>
-            <p>Navigate to /guides/:guideId to view a guide</p>
-            <p>Example: <a href="/guides/6328a5e9f1a2b3c4d5e6f7a8">/guides/6328a5e9f1a2b3c4d5e6f7a8</a></p>
-          </div>
-        } />
-      </Routes>
-    </Router>
-  )
+    <GuideProvider>
+      <DndProvider backend={HTML5Backend}>
+        {/* Toggle button for sidebar */}
+        <button onClick={toggleSidebar} className="sidebar-toggle-button">
+          ☰
+        </button>
+        
+        <div className={`app-container ${isSidebarVisible ? 'sidebar-visible' : ''}`}>
+          <Sidebar />
+          <main className="main-content">
+            <HomePageEditor />
+            <GuideEditor />
+          </main>
+        </div>
+      </DndProvider>
+    </GuideProvider>
+  );
 }
 
-export default App
+export default App;
